@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react';
 import './App.css'
+import {getAllStudents} from './components/client/Client'
+import {Avatar, Table} from 'antd'
+import Container from './components/client/Container';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [students, setStudents] = useState([]);
+
+  const fetchStudents = () => {
+    getAllStudents()
+      .then(res => res.json())
+      .then(students => {
+        setStudents(students);
+        console.log(students);
+      });
+  };
+
+
+  const columns = [
+    {
+      title: '',
+      key: 'avatar',
+      render: (text, student) => (
+        <Avatar>
+          {`${student.firstName.charAt(0).toUpperCase()}${student.lastName.charAt(0).toUpperCase()}`}
+        </Avatar>
+      )
+    },
+        {
+      title: 'StudentId',
+      dataIndex: 'studentId',
+      key: 'studentId'
+    },
+    {
+      title: 'First Name',
+      dataIndex: 'firstName',
+      key: 'firstName'
+    },
+    {
+      title: 'Last Name',
+      dataIndex: 'lastName',
+      key: 'lastName'
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email'
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'gender',
+      key: 'gender'
+    },
+  ]
+  
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Container>
+      <Table 
+      dataSource={students} 
+      columns={columns} 
+      pagination={false}
+      rowKey="studentId" />
+      </Container>
     </>
-  )
+  );
 }
-
 export default App
